@@ -1,0 +1,68 @@
+-module(lim_asynch).
+
+-export([start/0]).
+
+-export([start_dial_tone/0,
+	 start_fault_tone/0,
+	 start_ring_tone/0,
+	 start_busy_tone/0,
+	 stop_tone/0,
+	 start_ringing/0,
+	 stop_ringing/0,
+	 connect_to/1,
+	 disconnect_from/1,
+	 pid_with_phone_number/1]).
+
+
+start() ->
+    io:format("Starting Asynchronous LIM API.~n", []),
+    spawn_link(
+      fun() ->
+	      register(lim_asynch, self()),
+	      loop()
+      end).
+
+start_tone(Tone) ->
+    switch ! {self(), {start_tone, Tone}}.
+
+stop_tone(
+
+start_dial_tone() ->	lim_asynch ! {start__tone, self()}.
+start_fault_tone() ->	lim_asynch ! {start__tone, self()}.
+start_ring_tone() ->	lim_asynch ! {start__tone, self()}.
+start_busy_tone() ->	lim_asynch ! {start__tone, self()}.
+stop_tone() ->		lim_asynch ! {stop_tone, self()}.
+start_ringing() ->	lim_asynch ! {start_ringing, self()}.
+stop_ringing() ->	lim_asynch ! {stop_ringing, self()}.
+connect_to(Pid) ->	lim_asynch ! {connect_to, Pid, self()}.
+disconnect_from(Pid) ->	lim_asynch ! {disconnect_from, Pid, self()}.
+pid_with_phone_number(N) -> lim_asynch ! {pid_with_phone_number, N, self()}.
+
+
+loop() ->
+    receive
+	{start_dial_tone,ReplyTo} ->
+	    ReplyTo ! {switch, dial_tone_reply, lim:start_tone(dial)};
+	{start_fault_tone,ReplyTo} ->
+	    ReplyTo ! {switch, fault_tone_reply, lim:start_tone(fault)};
+	{start_ring_tone,ReplyTo} ->
+	    ReplyTo ! {switch, ring_tone_reply, lim:start_tone(ring)};
+	{start_busy_tone,ReplyTo} ->
+	    ReplyTo ! {switch, busy_tone_reply, lim:start_tone(busy)};
+	{stop_tone,ReplyTo} ->
+	    ReplyTo ! {switch, stop_tone_reply, lim:stop_tone()};
+	{start_ringing,ReplyTo} ->
+	    ReplyTo ! {switch, start_ringing_reply, lim:start_ringing()};
+	{stop_ringing,ReplyTo} ->
+	    ReplyTo ! {switch, stop_ringing_reply, lim:stop_ringing()};
+	{connect_to,Pid,ReplyTo} ->
+	    ReplyTo ! {switch, connect_reply, switch:connect(ReplyTo,Pid)};
+	{disconnect_from,Pid,ReplyTo} ->
+	    ReplyTo ! {switch, disconnect_reply,
+		       switch:disconnect(ReplyTo,Pid)};
+	{pid_with_phone_number,N,ReplyTo} ->
+	    ReplyTo ! {switch, pid_with_number_reply,
+		       lim:pid_with_phone_number(N)}
+    end,
+    loop().
+    
