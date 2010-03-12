@@ -1,0 +1,11 @@
+This program was originally used at Ericsson's Basic Erlang Course.
+At the end of day two, you were assigned the task of completing 
+a control program for the subscriber end of the POTS system.
+There is a graphical simulator, but back then, you could also
+use the pots program to drive an Ericsson MD101 phone switch
+and make your own (very local) telephone calls in the lab!
+
+The program contains enough interesting concurrency to illustrate
+the problem of complexity explosion when using certain approaches.
+Currently, there is very little documentation.
+
