@@ -7,5 +7,48 @@ and make your own (very local) telephone calls in the lab!
 
 The program contains enough interesting concurrency to illustrate
 the problem of complexity explosion when using certain approaches.
-Currently, there is very little documentation.
+Currently, there is very little documentation. The slides,
+doc/DeathByQCon100312.pdf give an introduction to the kind of 
+principles that can be explored with this demo.
 
+In the top-level Makefile, there are some ready-made targets
+for running the system. Simply type make <Target>, where
+<Target> is one of:
+
+orig
+     for the 'original' subscriber loop version
+event_fifo
+     for a callback-style implementation, with the ability to block
+event_fifo_asynch
+     for a variation of the above, where the callback is not allowed to block
+event_sel_asynch
+     where the callback still cannot block, but can control which messages it wants to 
+     see next.
+
+
+If you cannot use GNU make in your environment, the make files should still give
+you a hint about how to compile and run the code.
+
+Each version "works", for some definition of "works", except the event_fifo_asynch
+version, which is intentionally buggy. The problem with it is timing-based, and 
+the easiest way to trigger the bugs is to use a special function,
+
+lim:set_delay(Milliseconds).    % I usually use 2000, for 2 seconds
+
+You can type this into the Erlang shell. Don't forget to end the command with a
+period (.) and a newline. What the function does is delay the responses from the
+Line Interface Module (the switch) by the specified number of milliseconds.
+
+A sequence that is useful for illustrating the timing stability is:
+1. Lift the handset of phone A (doesn't matter which one)
+2. Put phone A back on-hook
+3. Lift the handset of phone A again
+4. Dial the number of one of the other phones.
+
+If you do this reasonably quickly, and have the delay enabled, you should be able
+to see how the animation trails your actions significantly, but actions are still
+carried out in the right order, and the other phone will eventually ring.
+
+If you do this with event_fifo_asynch, it should get out of synch already in step 2,
+and you should see error printouts in the shell, as it erroneously discards unknown
+(but vitally important) messages.
