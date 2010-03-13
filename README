@@ -21,7 +21,7 @@ event_fifo
      for a callback-style implementation, with the ability to block
 event_fifo_asynch
      for a variation of the above, where the callback is not allowed to block
-event_sel_asynch
+event_sel
      where the callback still cannot block, but can control which messages it wants to 
      see next.
 
