@@ -59,7 +59,7 @@ stop_tone_reply(?lim, _,
     %% be to always perform this check on return, but this would increase
     %% the overhead and increase the risk of entering infinite loops.
     case NextState of
-	{continue, Cont} when function(Cont) ->
+	{continue, Cont} when is_function(Cont) ->
 	    Cont(S#s{state = NextState});
 	_ ->
 	    {ok, S#s{state = NextState}}
