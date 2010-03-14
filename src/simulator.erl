@@ -86,7 +86,7 @@ loop(Type,Destroy,Phones,Tones) ->
 	{to_hw,Mult,{activate_elu5,N}} when Type == sim ->
 	    lim_driver ! {simulator,{Mult,{identity,elu5,active,N}}},
 	    loop(Type,Destroy,Phones,Tones);
-	{to_hw,Mult,{activate_tsu,N,M}} when Type == sim ->
+	{to_hw,Mult,{activate_tsu,N,_M}} when Type == sim ->
 	    lim_driver ! {simulator,{Mult,{identity,tsu,active,N}}},
 	    loop(Type,Destroy,Phones,Tones);
 	{gs,Destroy, click,_,_} ->
@@ -100,7 +100,7 @@ loop(Type,Destroy,Phones,Tones) ->
 	_ -> loop(Type,Destroy,Phones,Tones)
     end.
 
-send_to_all(S,[]) -> [];
+send_to_all(_S,[]) -> [];
 send_to_all(S,[P|L]) ->
     P ! S,
     send_to_all(S,L).
@@ -258,7 +258,7 @@ phone(P) ->
     end.
 
 match(_,[],_) -> [];
-match(S,[S|B],N) -> N;
+match(S,[S|_],N) -> N;
 match(S,[_|B],N) -> match(S,B,N+1).
 
 new_digit(N,M) ->
@@ -347,7 +347,7 @@ rectangle(C,Phones,Tones) ->
 	_ -> rectangle(C,Phones,Tones)
     end.
 
-find(Mult,[]) -> [];
+find(_Mult,[]) -> [];
 find(Mult,[{Mult,Y,L}|_]) -> {Y,L};
 find(Mult,[_|P]) -> find(Mult,P).
 
@@ -355,7 +355,7 @@ connect_phones([],_) -> true;
 connect_phones(_,[]) -> true;
 connect_phones({Y1,L},{Y2,M}) when Y2 > Y1 -> 
     connect_phones({Y2,M},{Y1,L});
-connect_phones({Y1,L},{Y2,M}) ->
+connect_phones({Y1,L},{Y2,_M}) ->
     A = (Y1-Y2) div 2,
     gs:config(L,[{coords,[{340-A,Y1}, {340+A,Y2}]},{start,270},{extent,180}]).
 

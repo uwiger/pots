@@ -106,7 +106,7 @@ distrmupdate(load_speaking) ->	2.
 indcalupdate(intern,normal)      -> 136;
 indcalupdate(intern,first_low)   -> 137;
 indcalupdate(extern,normal)      -> 138;
-indcalupdate(intern,first_low)   -> 139;
+indcalupdate(extern,first_low)   -> 139;  % UW 100313: s/intern/extern
 indcalupdate(callback,normal)    -> 140;
 indcalupdate(callback,first_low) -> 141.
 indcalupdate(steady) 		 -> 145;

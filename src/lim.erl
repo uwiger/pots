@@ -63,7 +63,7 @@ call(Request) ->
     end.
 
 
-set_delay(Ms) when integer(Ms), Ms >= 0 ->
+set_delay(Ms) when is_integer(Ms), Ms >= 0 ->
     call({set_delay, Ms}).
 
 
@@ -119,7 +119,7 @@ lim(#state{} = S) ->
             ets:insert(get(table),{Address,telnr_init(Address),Pid}),
             link(Pid),
             lim(S);
-	{request, Request, Ref, Pid} when reference(Ref), pid(Pid) ->
+	{request, Request, Ref, Pid} when is_reference(Ref), is_pid(Pid) ->
 	    S1 = handle_call(Request, Ref, Pid, S),
 	    lim(S1);
         {lim_driver, {Addr,{key_pressed,{digit,N}}}}->
@@ -148,7 +148,7 @@ lim(#state{} = S) ->
 handle_call(Request, Ref, From, #state{connections = Connections,
 				       delay = Delay} = S) ->
     case Request of
-        {set_delay, Ms} when integer(Ms), Ms >= 0 ->
+        {set_delay, Ms} when is_integer(Ms), Ms >= 0 ->
 	    send_reply(From, {set_delay_reply, Delay}, Ref, 0),
             S#state{delay = Ms};
         {connect_to,B} ->
@@ -307,7 +307,7 @@ filter([[Res]])->Res.
 %% Just to get the telnr from subscribers into the table.
 %% After that, pick all info about telnrs, Addr:s and pids from table.
 
-telnr_init(Addr) when integer(Addr)->
+telnr_init(Addr) when is_integer(Addr)->
     telnr_to_integer(telnr(Addr,configure:subscribers())).
 
 telnr(Addr,[{TelNr,Addr}|_Subscribers])->

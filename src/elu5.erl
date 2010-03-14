@@ -62,7 +62,7 @@ supervise(Card_Address, List) ->
 	{'EXIT',_,system_exit} ->
 	    io:format("Elu5 terminating~n", []),
 	    exit(system_exit);
-	{'EXIT', From, Reason} ->
+	{'EXIT', From, _Reason} ->
 	    case find_and_delete(From, List) of
 		{not_found, List1} ->
 		    supervise(Card_Address, List1);
@@ -76,7 +76,7 @@ supervise(Card_Address, List) ->
 	    io:format('Elu5 at ~w got ~w~n', [Card_Address, Other])
     end.
 
-find_and_delete(Pid, []) ->
+find_and_delete(_Pid, []) ->
     {not_found, []};
 
 find_and_delete(Pid, [{Pid,N} | T]) ->

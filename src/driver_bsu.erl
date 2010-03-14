@@ -39,7 +39,7 @@ decode_bytes([12,D02,D03,D04]) ->
 	Multiple = D02 bsl 8 bor D03,
 	FaultCode = D04,
 	{switch_fault,Multiple,FaultCode};
-decode_bytes([13|Bytes]) ->
+decode_bytes([13|_Bytes]) ->
 	undefined.
 
 %% Signal encoding entry point.
@@ -67,7 +67,7 @@ encode_signal({connect,A,Na,B,Nb}) ->
 %	D12 = Nb,
 	D12 = Na,
 	[D02,D03,D04,D05,D06,D07,D08,D09,D10,D11,D12,0,0,0,0,0];
-encode_signal({disconnect,A,Na,B,Nb}) ->
+encode_signal({disconnect,A,_Na,B,Nb}) ->
 	%% Connect A to B. 
 	%% Na is the number of listeners to A (after the operation)
 	%% Nb is the number of listeners to B (after the operation)

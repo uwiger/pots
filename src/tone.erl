@@ -52,7 +52,7 @@ tsu(Address, Number) ->
 	top(Address).
 
 
-subscribe(Address, 0) -> 
+subscribe(_Address, 0) -> 
 	true;
 subscribe(Address, N) ->
 	lim_driver:subscribe(Address + N - 1, driver_tsu),
@@ -75,12 +75,12 @@ top(Address) ->
 	        _     ->
 	            exit(From, 'bad_tone_request')
 	    end;
-	{From, stop_tone, Tone_Ad} ->
+	{_From, stop_tone, Tone_Ad} ->
 	    lim_driver:send_cmd(Tone_Ad, {start_tone, 0, 0});
 	{'EXIT',_,system_exit} ->
 	    io:format('Tone mangager terminating~n', []),
 	    exit(normal);
-	{'EXIT', From, Reason} ->
+	{'EXIT', _From, Reason} ->
 	    io:format('Tsu got Exit ~w~n', [Reason]);
 	Other ->
 	    io:format('Tsu got message ~w~n', [Other])
@@ -98,7 +98,7 @@ get_tone_sender(Line) ->
 	        exit('bad_address_to_which_to_send_tone')
 	end.
 
-start_tone(Line, Tone, Tone_Ad) ->
+start_tone(_Line, Tone, Tone_Ad) ->
     %% (patric)
     %% Done in switch instead.
     %% Tone_Ad = get_tone_sender(Line),
@@ -106,7 +106,7 @@ start_tone(Line, Tone, Tone_Ad) ->
     %% switch:connect(Line, Tone_Ad).    
 
 
-stop_tone(Line,Tone_Ad) ->
+stop_tone(_Line,Tone_Ad) ->
     %% (patric)
     %% Done in switch instead.
     %% Tone_Ad = get_tone_sender(Line),

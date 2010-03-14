@@ -160,7 +160,7 @@ driver(Starter, Type) ->
 %% specially codeing it.
 
 
-restart_hw(Port, 10) ->				% allow max 10 attempts
+restart_hw(_Port, 10) ->				% allow max 10 attempts
 	io:format('hw restart failed - giving up~n',[]),
 	exit('no hardware');
 
@@ -322,7 +322,7 @@ receive_hw_message(Bytes, DevInfoTree, Bsu, Type) ->
 	     end;
 	bsu when Bsu /= empty ->
 	    case catch apply(driver_bsu, decode, [Bytes]) of
-		{'ERROR', What} ->
+		{'ERROR', _What} ->
 		    io:format('bad hw msg from bsu ~w~n', [Bytes]);
 		Msg ->
 		    case Type of
@@ -345,7 +345,7 @@ receive_sim_message(Mult, Msg, DevInfoTree, Bsu, sim) ->
     case check_multiple(Mult) of
 	ok ->
 	    case multiple_data(Mult, DevInfoTree) of
-		{Id, Driver} ->
+		{Id, _Driver} ->
 		    Id ! {lim_driver, {Mult, Msg}};
 		_ ->
 		    io:format('Unsubscribed simulator message ~w ~w~n',
@@ -357,7 +357,7 @@ receive_sim_message(Mult, Msg, DevInfoTree, Bsu, sim) ->
 	    io:format('Message to bad multiple ~w ~w~n', [Mult, Msg])
     end;
 
-receive_sim_message(Mult, Msg, DevInfoTree, Bsu, _) ->
+receive_sim_message(Mult, Msg, _DevInfoTree, _Bsu, _) ->
     io:format("Message ~w to ~w from simulator ignored~n", [Msg, Mult]).
 
 
@@ -431,7 +431,7 @@ set_multiple_data(Mult,Tree, Data)  ->
 delete_id(Id, Tree) ->
     delete_id(Id, 1, Tree).
 
-delete_id(Id, 33, Tree) -> Tree;
+delete_id(_Id, 33, Tree) -> Tree;
 delete_id(Id, N, Tree) ->
     case element(N, Tree) of
 	empty ->
@@ -443,7 +443,7 @@ delete_id(Id, N, Tree) ->
 
 %% Scan the 16 leaves
 
-delete_id_leaf(Id, 17, Leaf) -> Leaf;
+delete_id_leaf(_Id, 17, Leaf) -> Leaf;
 delete_id_leaf(Id, N, Leaf) ->
     case element(N, Leaf) of
 	{Id, _} ->

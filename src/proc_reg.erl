@@ -71,7 +71,7 @@ reg(P_List) ->
 		    undefined ->
 			link(From), 
 			reg([{Port,From} | P_List]);
-		    Other ->
+		    _Other ->
 			exit(From, double_registration),
 			reg(P_List)
 			end;
@@ -80,14 +80,14 @@ reg(P_List) ->
 		    undefined ->
 			exit(From, undefined_process),
 			reg(P_List);
-		    Other ->
+		    _Other ->
 			reg(erase_process(From, P_List))
 		    end;
 	    {'EXIT',_,system_exit} ->
 		io:format('Process register terminating~n', []),
 	    exit(normal);
 
-	    {'EXIT', From, Reason} ->
+	    {'EXIT', From, _Reason} ->
 		reg(erase_process(From, P_List));
 	    Other ->
 		io:format('proc reg got ~w~n', [Other]),
@@ -96,7 +96,7 @@ reg(P_List) ->
 
 get_port(_,[]) ->
 	undefined;
-get_port(Pid, [{Port, Pid}| T]) ->
+get_port(Pid, [{Port, Pid}| _T]) ->
 	Port;
 get_port(Pid, [{_,_} | T]) ->
 	get_port(Pid, T).
@@ -105,7 +105,7 @@ get_port(Pid, [{_,_} | T]) ->
 
 get_process(_,[]) ->
 	undefined;
-get_process(Port, [{Port, Pid}| T]) ->
+get_process(Port, [{Port, Pid}| _T]) ->
 	Pid;
 get_process(Port, [{_,_} | T]) ->
 	get_process(Port, T).

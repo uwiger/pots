@@ -63,7 +63,7 @@ start_myself() ->
     switch([], ?DEFAULT_DELAY).
 
 
-set_delay(Ms) when integer(Ms), Ms >= 0 ->
+set_delay(Ms) when is_integer(Ms), Ms >= 0 ->
     switch ! {self(), {set_delay, Ms}},
     receive
 	{switch, {set_delay_reply, Res}} ->
@@ -136,7 +136,7 @@ addr_for_pid(Pid)->
 
 switch(Connections, Delay) ->
     receive
-	{Pid, {set_delay, Ms}} when integer(Ms), Ms >= 0 ->
+	{Pid, {set_delay, Ms}} when is_integer(Ms), Ms >= 0 ->
 	    Pid ! {switch, {set_delay_reply, Delay}},
 	    switch(Connections, Ms);
 	{A,{connect_to,B}} ->
@@ -221,7 +221,7 @@ switch(Connections, Delay) ->
 %%	    send_reply(addr2pid(Addr), {lim,offhook}, Delay),
 	    addr2pid(Addr) ! {?lim,offhook},
 	    switch(Connections, Delay);
-	{lim_driver,Other}->
+	{lim_driver,_Other}->
 	    switch(Connections, Delay);
   
 	{'EXIT',_,system_exit} ->
@@ -282,7 +282,7 @@ other_connections(_,A, [{B,A,_} | _ ]) ->
 other_connections(A,B, [_ | T]) ->
     other_connections(A,B, T).
 
-delete_connection(A,B, []) ->
+delete_connection(_A,_B, []) ->
     {no, []};
 delete_connection(A,B, [{A,C,Pid} | T]) ->
     case B of
@@ -303,7 +303,7 @@ delete_connection(A,B, [H | T]) ->
     {Result, [H | Rest]}.
 
 
-delete_process(Pid, []) ->
+delete_process(_Pid, []) ->
     [];
 delete_process(Pid, [{A,B,Pid} | T]) ->
     lim_driver:send_cmd(bsu, {disconnect, A,0,B,0}),
@@ -336,14 +336,14 @@ filter([[Res]])->Res.
 %% Just to get the telnr from subscribers into the table.
 %% After that, pick all info about telnrs, Addr:s and pids from table.
 
-telnr_init(Addr) when integer(Addr)->
+telnr_init(Addr) when is_integer(Addr)->
     telnr_to_integer(telnr(Addr,configure:subscribers())).
 
-telnr(Addr,[{TelNr,Addr}|Subscribers])->
+telnr(Addr,[{TelNr,Addr}|_Subscribers])->
     TelNr;
 telnr(Addr,[_|Subscribers])->
     telnr(Addr,Subscribers);
-telnr(Addr,[])->
+telnr(_Addr,[])->
     %% io:format("WARNING can't find telnr for ~w~n",[Addr]),
     [0].
 

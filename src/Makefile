@@ -5,14 +5,15 @@
 EBIN = ../ebin
 
 SOURCES := $(wildcard *.erl)
-MODULES := $(pathsubst %.erl,%,$(SOURCES))
-BEAMS := $(pathsubst %,$(EBIN)/%.beam,$(MODULES))
+MODULES := $(patsubst %.erl,%,$(SOURCES))
+BEAMS := $(patsubst %,$(EBIN)/%.beam,$(MODULES))
 
 vpath %.beam $(EBIN)
 
 ERLC = erlc -W -o $(EBIN)
 
 all: $(BEAMS)
+
 clean:
 	rm -f *~ $(EBIN)/*.beam
 

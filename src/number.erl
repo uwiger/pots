@@ -33,7 +33,7 @@ valid_sequences()->
 	   5]],
      2,[4,[7]]].
 
-analyse(D,[D,Ds|_]) when list(Ds)->
+analyse(D,[D,Ds|_]) when is_list(Ds)->
     {incomplete,Ds};
 analyse(D,[D|_])->
     valid;

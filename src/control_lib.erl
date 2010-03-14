@@ -33,7 +33,7 @@ start_tone(Tone)->
 	    print("ERROR tried to start tone when connected to ~w (~w)",
 		  [OtherPid,number(OtherPid)]),
 	    {no, OtherPid};
-	Other->
+	_Other->
 	    print("ERROR in control_lib:start_tone/1"),
 	    error
     end.
@@ -49,7 +49,7 @@ stop_tone()->
 	{no, OtherPid} when OtherPid=/=tone_sender->
 	    print("ERROR tried to stop tone without being started"),
 	    {no, OtherPid};
-	Other->
+	_Other->
 	    print("ERROR in control_lib:stop_tone/0"),
 	    error
     end.
@@ -76,7 +76,7 @@ connect_to(Pid)->
 	    print("ERROR connect failed, already connected to ~w (~w)",
 		  [OtherPid,number(OtherPid)]),
 	    {no, OtherPid};
-	Other->
+	_Other->
 	    print("ERROR in control_lib:connect_to/1"),
 	    error
     end.
@@ -94,7 +94,7 @@ disconnect_from(Pid)->
 	    print("ERROR disconnect failed, no connection to ~w (~w)",
 		  [Pid,number(Pid)]),
 	    {no, OtherPid};
-	Other->
+	_Other->
 	    print("ERROR in control_lib:disconnect_from/1"),
 	    error
     end.
@@ -104,7 +104,7 @@ send(Pid,Msg)->
     case Pid of
 	Self->
 	    print("WARNING tried to send to myself");
-	Pid when pid(Pid)->
+	Pid when is_pid(Pid)->
 	    Pid ! Msg,
 	    print("sent ~w to ~w",[Msg,Pid]);
 	_->
